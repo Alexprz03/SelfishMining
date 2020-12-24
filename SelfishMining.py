@@ -5,17 +5,15 @@ import random
 # n : number of attack cycles belonging to R+
 # q : relative hashrate belonging to [0;1]
 # gamma : the ratio of honest miners that choose to mine on the pool’s block belonging to [0;1]
-# alpha : the selfish pool mining power belonging to [0;0.5]
 # bitcoinValue : coinbase belonging to R+
 # bitcoinReward : no. of bitcoin for each block mined belonging to R+
 class SelfishMining:
 
     # Initialisation
-    def init(self, **inputVar):
+    def __init__(self, **inputVar):
         self.n = inputVar['numberCycles']
         self.q = inputVar['relativeHashrate']
         self.gamma = inputVar['gamma']
-        self.alpha = inputVar['alpha']
 
         self.honestChain = 0 # unit
         self.selfishChain = 0 # unit
@@ -117,3 +115,14 @@ class SelfishMining:
         # Updating delta
         self.delta = self.selfishChain - self.honestChain
 
+n = int(input("numberCycle : "))
+q = float(input("relativeHashrate : "))
+gamma = float(input("gamma : "))
+bitcoinValue = int(input("bitcoinValue : "))
+bitcoinReward = int(input("bitcoinReward : "))
+
+inputVariables = {'numberCycles':n, 'relativeHashrate':q, 'gamma':gamma,'bitcoinValue':bitcoinValue,'bitcoinReward':bitcoinReward}
+
+new = SelfishMining(**inputVariables)
+new.Simulation1()
+print('reward : ', new.profitSelfishMining)
