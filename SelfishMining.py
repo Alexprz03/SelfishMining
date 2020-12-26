@@ -18,10 +18,9 @@ class SelfishMining:
         self.honestChain = 0 # unit
         self.selfishChain = 0 # unit
         self.officialChain = 0 # unit
-        self.oprhanBlocks = 0 # unit
+        self.orphanBlocks = 0 # unit
         self.delta = 0 # advance of selfish miners on honests'ones
 
-        self.counter = 1 # unit
         self.time = 0 # second    
         self.miningTime = 600 # seconds
         self.timeUpdate = 0 # second
@@ -33,12 +32,13 @@ class SelfishMining:
 
     # Simulation 1 - Mining classic 
     def Simulation1(self):
-        while(self.counter <= self.n):
+        while(self.officialChain < self.n):
+
             r1 = random.uniform(0,1)
             
             # Update variables
             self.update()
-
+                
             # If selfish miner solve the block
             if(r1 < self.q):
                 self.selfishChain += 1
@@ -48,63 +48,60 @@ class SelfishMining:
 
             # If honest miner solve the block in first
             else:
-                self.officialChain += self.honestChain
-                self.selfishChain = self.honestChain = 0
-                self.counter += 1
+                self.officialChain += 1
 
     
     # Simulation 2 - SelfishMining Attack
     def Simulation2(self):
-        r2 = random.uniform(0,1)
-            
-        # Update variables
-        self.update()
+        while(self.selfishChain != 0 and self.officialChain <= self.n):
+            r2 = random.uniform(0,1)
 
-        # If selfish miner solve the block in first
-        if(r2 < self.q):
-            self.selfishChain += 1
-        else:
-            # Difference between selfish and honest chain
-            if(self.delta == 0):
-                if(r2 < self.q):
-                    self.selfishChain += 1
-                    self.officialChain += self.selfishChain
-                    self.profitSelfishMining += self.miningReward * self.selfishChain
-                    self.oprhanBlocks += self.honestChain
-                    self.counter += self.selfishChain
-                    self.selfishChain = self.honestChain = 0
+            # Update variables
+            self.update()
+            # If selfish miner solve the block in first
+            if(r2 < self.q):
+                self.selfishChain += 1
+            else:
+                self.honestChain +=1 
 
-                else:
-                    r3 = random.uniform(0,1)
-                    if(r3 <= self.gamma):
+                # Difference between selfish and honest chain
+                if(self.delta == 0):
+                    if(r2 < self.q):
                         self.selfishChain += 1
                         self.officialChain += self.selfishChain
                         self.profitSelfishMining += self.miningReward * self.selfishChain
-                        self.oprhanBlocks += self.honestChain
-                        self.counter += self.selfishChain
+                        self.orphanBlocks += self.honestChain
                         self.selfishChain = self.honestChain = 0
+
                     else:
-                        self.officialChain += self.honestChain
-                        self.counter += self.honestChain
-                        self.selfishChain = self.honestChain = 0
+                        r3 = random.uniform(0,1)
+                        # if the ratio of honest miners choose to mine on the pool’s block
+                        if(r3 <= self.gamma):
+                            self.selfishChain += 1
+                            self.officialChain += self.selfishChain
+                            self.profitSelfishMining += self.miningReward * self.selfishChain
+                            self.orphanBlocks += self.honestChain
+                            self.selfishChain = self.honestChain = 0
+                        else:
+                            self.officialChain += self.honestChain
+                            self.selfishChain = self.honestChain = 0
 
-            # Difference between selfish and honest chain
-            elif(self.delta == 1):
-                self.officialChain += self.selfishChain
-                self.profitSelfishMining += self.miningReward * self.selfishChain
-                self.oprhanBlocks += self.honestChain
-                self.counter += self.selfishChain
-                self.selfishChain = self.honestChain = 0
+                # Difference between selfish and honest chain
+                elif(self.delta == 1):
+                    self.officialChain += self.selfishChain
+                    self.profitSelfishMining += self.miningReward * self.selfishChain
+                    self.orphanBlocks += self.honestChain
+                    self.selfishChain = self.honestChain = 0
 
-            elif(self.delta == -1):
-                self.officialChain += self.honestChain
-                self.counter += self.honestChain
-                self.oprhanBlocks += self.selfishChain
-                self.selfishChain = self.honestChain = 0
+                elif(self.delta == -1):
+                    self.officialChain += self.honestChain
+                    self.orphanBlocks += self.selfishChain
+                    self.selfishChain = self.honestChain = 0
+
 
     def update(self):
         # Updating the difficulty
-        if(self.counter % 2016 == 0):
+        if(self.officialChain % 2016 == 0 and self.officialChain != 0):
             self.miningTime = self.miningTime * ((2016 * 600) / self.timeUpdate)
             self.timeUpdate = 0
 
@@ -115,14 +112,46 @@ class SelfishMining:
         # Updating delta
         self.delta = self.selfishChain - self.honestChain
 
-n = int(input("numberCycle : "))
-q = float(input("relativeHashrate : "))
-gamma = float(input("gamma : "))
-bitcoinValue = int(input("bitcoinValue : "))
-bitcoinReward = int(input("bitcoinReward : "))
+def timeConverter(n):
+    if(n>=60):
+        min=n//60
+        sec=n%60
+        if(min>=60):
+            hour=min//60 
+            min = min%60
+            if(hour>=24):
+                day=hour//24
+                hour=hour%24
+            else:
+                day=0
+        else:
+            hour=0 
+    else:
+        min=0
+        sec=n
+    return sec, min, hour, day
 
-inputVariables = {'numberCycles':n, 'relativeHashrate':q, 'gamma':gamma,'bitcoinValue':bitcoinValue,'bitcoinReward':bitcoinReward}
+
+# n = int(input("numberCycle : "))
+# q = float(input("relativeHashrate : "))
+# gamma = float(input("gamma : "))
+# bitcoinValue = int(input("bitcoinValue : "))
+# bitcoinReward = int(input("bitcoinReward : "))
+#inputVariables = {'numberCycles':n, 'relativeHashrate':q, 'gamma':gamma,'bitcoinValue':bitcoinValue,'bitcoinReward':bitcoinReward}
+inputVariables = {'numberCycles':10, 'relativeHashrate':0.25, 'gamma':0.5,'bitcoinValue':10000,'bitcoinReward':6}
 
 new = SelfishMining(**inputVariables)
 new.Simulation1()
-print('reward : ', new.profitSelfishMining)
+print('\nreward :', new.profitSelfishMining, end=' dollars\n')
+time = timeConverter(new.time)
+if(time[3] == 0): 
+    print('time :', time[2],'hours', time[1],'minutes', time[0],'seconds')
+elif(time[2] == 0): 
+    print('time :', time[1],'minutes', time[0],'seconds')
+elif(time[1] == 0): 
+    print('time :', time[0],'seconds')
+else:
+    print('time :', time[3],'days', time[2],'hours', time[1],'minutes', time[0],'seconds')
+print('orphanBlocks :', new.orphanBlocks, end=' units\n')
+print('officialChain :', new.officialChain, end=' units\n\n')
+
