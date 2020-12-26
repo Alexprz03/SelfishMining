@@ -132,13 +132,14 @@ def timeConverter(n):
     return sec, min, hour, day
 
 
-# n = int(input("numberCycle : "))
-# q = float(input("relativeHashrate : "))
-# gamma = float(input("gamma : "))
-# bitcoinValue = int(input("bitcoinValue : "))
-# bitcoinReward = int(input("bitcoinReward : "))
-#inputVariables = {'numberCycles':n, 'relativeHashrate':q, 'gamma':gamma,'bitcoinValue':bitcoinValue,'bitcoinReward':bitcoinReward}
-inputVariables = {'numberCycles':10, 'relativeHashrate':0.25, 'gamma':0.5,'bitcoinValue':10000,'bitcoinReward':6}
+n = int(input("numberCycle : "))
+q = float(input("relativeHashrate : "))
+gamma = float(input("gamma : "))
+bitcoinValue = int(input("bitcoinValue : "))
+bitcoinReward = int(input("bitcoinReward : "))
+inputVariables = {'numberCycles':n, 'relativeHashrate':q, 'gamma':gamma,'bitcoinValue':bitcoinValue,'bitcoinReward':bitcoinReward}
+
+#inputVariables = {'numberCycles':10, 'relativeHashrate':0.25, 'gamma':0.5,'bitcoinValue':10000,'bitcoinReward':6}
 
 new = SelfishMining(**inputVariables)
 new.Simulation1()
