@@ -235,6 +235,7 @@ while ans:
     elif ans=="2":
       data = testSelfishMiningAutomaticData()
       displayData(data)
+      pause()
     elif ans=="3":
       data = testSelfishMiningInputData()
       displayData(data)
